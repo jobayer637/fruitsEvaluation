@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foods</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <style>
+
+    </style>
+</head>
+
+<body>
+
+    <div class="container mt-1">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card rounded-0">
+                    <div class="card-header">
+                        <input class="form-control rounded-0" type="text" id="search"
+                            placeholder="Enter a fruit name as your choice">
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered m-0 p-0">
+                            <thead class="">
+                                <tr class="table-info">
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Category</th>
+                                    <th scope="col">Type</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dis">
+
+                            </tbody>
+                        </table>
+                        <img class="card-img rounded-0" src="" alt="" id="img" height="" width="">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr class="table-info">
+                                    <th scope="col">ENERC_KCAL</th>
+                                    <th scope="col">FAT</th>
+                                    <th scope="col">FIBTG</th>
+                                    <th scope="col">PROCNT</th>
+                                </tr>
+                            </thead>
+                            <tbody id="nutr">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-1">
+        <div class="card rounded-0 text-center py-2" aria-autocomplete="both">
+            YubaYer &copy; 2020
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $("#search").on('keyup click', function () {
+            let food = $(this).val()
+            foods(food)
+
+        })
+
+        function foods(food) {
+            $.ajax({
+                url: 'https://edamam-food-and-grocery-database.p.rapidapi.com/parser',
+                type: 'GET',
+                dataType: 'json',
+                headers: {
+                    "x-rapidapi-host": "edamam-food-and-grocery-database.p.rapidapi.com",
+                    "x-rapidapi-key": "5f9ae60852mshe4aa57a4c537589p18953ejsnbc825da66361"
+                }, data: {
+                    ingr: food
+                },
+                success: function (data) {
+                    if (data.parsed.length < 1) {
+                        $("#dis, #nutr").html('')
+                        $("#img").attr('src', '')
+                    } else (
+                        $.each(data.parsed, function (i, v) {
+                            $("#dis").html(` <tr>
+                                    <td>${data.text}</td>
+                                    <td>${v.food.category}</td>
+                                    <td>${v.food.categoryLabel}</td>
+                                </tr>`)
+                            $("#img").attr('src', v.food.image)
+                            $("#nutr").html(` <tr>
+                                    <td>${v.food.nutrients.ENERC_KCAL}</td>
+                                    <td>${v.food.nutrients.FAT}</td>
+                                    <td>${v.food.nutrients.FIBTG}</td>
+                                    <td>${v.food.nutrients.PROCNT}</td>
+                                </tr>`)
+                            $("#img").attr('src', v.food.image)
+                        })
+                    )
+                }
+            })
+        }
+        foods('mango')
+
+    </script>
+</body>
+
+</html>
